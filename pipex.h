@@ -6,7 +6,7 @@
 /*   By: btvildia <btvildia@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 15:11:52 by btvildia          #+#    #+#             */
-/*   Updated: 2024/03/12 21:21:40 by btvildia         ###   ########.fr       */
+/*   Updated: 2024/03/14 22:25:26 by btvildia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,6 @@
 # include <sys/wait.h>
 # include <unistd.h>
 
-void		free_array(char **arr);
-void		ft_error(char *str);
-
 typedef struct s_pipex
 {
 	char	**cmd1;
@@ -31,4 +28,9 @@ typedef struct s_pipex
 	char	*file2;
 	char	*path;
 }			t_pipex;
+
+void		free_array(char **arr);
+void		ft_error(char *str);
+void		print_array(char **arr, int j);
+
 #endif
