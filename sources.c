@@ -6,7 +6,7 @@
 /*   By: btvildia <btvildia@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 21:51:09 by btvildia          #+#    #+#             */
-/*   Updated: 2024/03/14 18:27:03 by btvildia         ###   ########.fr       */
+/*   Updated: 2024/03/28 18:07:42 by btvildia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,12 @@ void	free_array(char **arr)
 		i++;
 	}
 	free(arr);
+}
+
+void	ft_no_file(char *arg)
+{
+	ft_printf("%s: No such file or directory\n", arg);
+	exit(1);
 }
 
 void	ft_error(char *str)

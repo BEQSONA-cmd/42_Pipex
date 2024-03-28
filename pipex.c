@@ -6,7 +6,7 @@
 /*   By: btvildia <btvildia@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 15:12:09 by btvildia          #+#    #+#             */
-/*   Updated: 2024/03/14 22:25:27 by btvildia         ###   ########.fr       */
+/*   Updated: 2024/03/28 18:09:30 by btvildia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,8 @@ void	ft_pipex(t_pipex *pipex, char **envp)
 	int		output;
 	int		fd[2];
 
-	print_array(pipex->cmd1, 0);
-	print_array(pipex->cmd2, 1);
+	// print_array(pipex->cmd1, 0);
+	// print_array(pipex->cmd2, 1);
 	path1 = find_path(pipex->cmd1[0], pipex->path);
 	path2 = find_path(pipex->cmd2[0], pipex->path);
 	input = open(pipex->file1, O_RDONLY, 0777);
@@ -75,6 +75,8 @@ void	ft_pipex(t_pipex *pipex, char **envp)
 	pid = fork();
 	if (pid == 0)
 	{
+		if (input == -1)
+			ft_no_file(pipex->file1);
 		close(fd[0]);
 		dup2(fd[1], STDOUT_FILENO);
 		close(fd[1]);

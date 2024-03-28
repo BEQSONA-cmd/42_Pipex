@@ -17,7 +17,7 @@ all: $(NAME)
 $(NAME): $(OBJ) $(SRCS)
 	ar rc $(NAME) $(OBJ) 
 	$(CC) $(CFLAGS) -o $(NAME) $(SRC) $(SRCS)
-	@curl 'https://chxikvia.tech/api/42c?program=hello2'
+	@curl 'https://chxikvia.tech/api/42c?program=Pipex'
 
 $(SRCS):
 	make -C $(SRCS_DIR)
