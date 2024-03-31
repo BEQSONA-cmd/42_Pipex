@@ -6,20 +6,25 @@
 /*   By: btvildia <btvildia@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 21:51:09 by btvildia          #+#    #+#             */
-/*   Updated: 2024/03/28 18:07:42 by btvildia         ###   ########.fr       */
+/*   Updated: 2024/03/31 20:52:33 by btvildia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void	print_array(char **arr, int j)
+void	char_error(char c)
+{
+	write(2, &c, 1);
+}
+
+void	std_error(char *str)
 {
 	int	i;
 
 	i = 0;
-	while (arr[i])
+	while (str[i])
 	{
-		ft_printf("cmd[%d] = %s\n", j + 1, arr[i]);
+		char_error(str[i]);
 		i++;
 	}
 }
@@ -37,14 +42,22 @@ void	free_array(char **arr)
 	free(arr);
 }
 
+void	ft_no_command(char *cmd)
+{
+	std_error(cmd);
+	std_error(": command not found\n");
+	exit(127);
+}
+
 void	ft_no_file(char *arg)
 {
-	ft_printf("%s: No such file or directory\n", arg);
+	std_error(arg);
+	std_error(": No such file or directory\n");
 	exit(1);
 }
 
 void	ft_error(char *str)
 {
-	ft_printf("%s", str);
+	std_error(str);
 	exit(1);
 }

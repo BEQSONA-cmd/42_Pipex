@@ -1,30 +1,23 @@
 NAME = pipex
 
 SRC = pipex.c\
+	source.c\
 	sources.c\
 
 OBJ = $(SRC:.c=.o)
 
 CC = cc
 
-CFLAGS = -Wall -Wextra -Werror -g
-
-SRCS_DIR = ./src
-SRCS = ./src/srcs.a
+CFLAGS = -Wall -Wextra -Werror
 
 all: $(NAME)
 
-$(NAME): $(OBJ) $(SRCS)
+$(NAME): $(OBJ)
 	ar rc $(NAME) $(OBJ) 
-	$(CC) $(CFLAGS) -o $(NAME) $(SRC) $(SRCS)
-	@curl 'https://chxikvia.tech/api/42c?program=Pipex'
-
-$(SRCS):
-	make -C $(SRCS_DIR)
+	$(CC) $(CFLAGS) -o $(NAME) $(SRC)
 
 clean:
 	rm -f $(OBJ)
-	make fclean -C $(SRCS_DIR)
 
 fclean: clean
 	rm -f $(NAME)
@@ -32,5 +25,3 @@ fclean: clean
 re: fclean $(NAME)
 
 .PHONY:	all clean fclean re bonus
-
-# valgrind --leak-check=full
