@@ -2,13 +2,13 @@ NAME = pipex
 
 SRC = pipex.c\
 	source.c\
-	sources.c\
+	utils1.c\
 
 OBJ = $(SRC:.c=.o)
 
 CC = cc
 
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g
 
 all: $(NAME)
 
@@ -25,3 +25,6 @@ fclean: clean
 re: fclean $(NAME)
 
 .PHONY:	all clean fclean re bonus
+
+
+

@@ -6,7 +6,7 @@
 /*   By: btvildia <btvildia@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 15:12:09 by btvildia          #+#    #+#             */
-/*   Updated: 2024/03/31 21:57:19 by btvildia         ###   ########.fr       */
+/*   Updated: 2024/04/01 20:59:56 by btvildia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,90 +20,69 @@ t_pipex	ft_init_pipex(char **argv, char **envp)
 	i = 0;
 	if (ft_strlen(argv[1]) == 0 || ft_strlen(argv[4]) == 0 || argv[1] == NULL
 		|| argv[4] == NULL)
-		ft_error("Invalid file name\n");
+		ft_error_exit(NULL, "Invalid file name\n", 1);
 	if (ft_strlen(argv[2]) == 0 || ft_strlen(argv[3]) == 0)
-		ft_error("Invalid command\n");
+		ft_error_exit(NULL, "Invalid command\n", 1);
 	pipex.file1 = ft_strdup(argv[1]);
 	pipex.file2 = ft_strdup(argv[4]);
-	pipex.cmd1 = NULL;
-	pipex.cmd2 = NULL;
 	pipex.cmd1 = ft_split(argv[2], ' ');
 	pipex.cmd2 = ft_split(argv[3], ' ');
 	while (ft_strncmp(envp[i], "PATH=", 5) != 0)
 		i++;
 	pipex.path = ft_strdup(envp[i]);
+	pipex.path1 = find_path(pipex.cmd1[0], pipex.path);
+	pipex.path2 = find_path(pipex.cmd2[0], pipex.path);
+	pipex.envp = envp;
 	return (pipex);
 }
 
-char	*find_path(char *cmd, char *path)
-{
-	char	*c;
-	char	*tmp;
-	char	**paths;
-	int		i;
-	int		fd;
-
-	i = 0;
-	paths = ft_split(path, ':');
-	if (paths[0] == NULL)
-		ft_error("Invalid path\n");
-	while (paths[i] != NULL)
-	{
-		tmp = ft_strjoin(paths[i], "/");
-		c = ft_strjoin(tmp, cmd);
-		free(tmp);
-		fd = open(c, O_RDONLY);
-		if (fd != -1)
-		{
-			close(fd);
-			free_array(paths);
-			return (c);
-		}
-		free(c);
-		i++;
-	}
-	free_array(paths);
-	return (NULL);
-}
-
-void	ft_pipex(t_pipex *pipex, char **envp)
+void	ft_pipex(t_pipex *pipex)
 {
 	pid_t	pid;
-	char	*path1;
-	char	*path2;
 	int		input;
 	int		output;
 	int		fd[2];
-	pid_t	pid2;
 
-	path1 = find_path(pipex->cmd1[0], pipex->path);
-	path2 = find_path(pipex->cmd2[0], pipex->path);
 	if (pipex->cmd1[0] == NULL || pipex->cmd2[0] == NULL)
-		ft_error("Invalid command\n");
+		ft_error_exit(NULL, "Invalid command\n", 1);
 	input = open(pipex->file1, O_RDONLY, 0777);
 	output = open(pipex->file2, O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	if (pipe(fd) == -1)
-		ft_error("Pipe\n");
+		ft_error_exit(NULL, "Pipe\n", 1);
 	pid = fork();
 	if (pid == 0)
-	{
-		if (input == -1)
-			ft_no_file(pipex->file1);
-		if (path1 == NULL)
-			ft_no_command(pipex->cmd1[0]);
-		close(fd[0]);
-		dup2(fd[1], STDOUT_FILENO);
-		close(fd[1]);
-		dup2(input, STDIN_FILENO);
-		close(input);
-		execve(path1, pipex->cmd1, envp);
-		ft_error("child1 fails\n");
-	}
+		child_process1(pipex, pipex->path1, input, fd);
+	close(fd[1]);
 	waitpid(pid, NULL, 0);
+	child_process2(pipex, pipex->path2, output, fd);
+	close(fd[0]);
+	free(pipex->path1);
+	free(pipex->path2);
+}
+
+void	child_process1(t_pipex *pipex, char *path1, int input, int *fd)
+{
+	if (input == -1)
+		ft_error_exit(pipex->file1, ": No such file or directory\n", 1);
+	if (path1 == NULL)
+		ft_error_exit(pipex->cmd1[0], ": command not found\n", 127);
+	close(fd[0]);
+	dup2(fd[1], STDOUT_FILENO);
+	close(fd[1]);
+	dup2(input, STDIN_FILENO);
+	close(input);
+	execve(path1, pipex->cmd1, pipex->envp);
+	ft_error_exit(NULL, "child1 fails\n", 1);
+}
+
+void	child_process2(t_pipex *pipex, char *path2, int output, int *fd)
+{
+	pid_t	pid2;
+
 	if (output == -1)
-		ft_no_file(pipex->file2);
+		ft_error_exit(pipex->file2, ": No such file or directory\n", 1);
 	if (path2 == NULL)
-		ft_no_command(pipex->cmd2[0]);
+		ft_error_exit(pipex->cmd2[0], ": command not found\n", 127);
 	pid2 = fork();
 	if (pid2 == 0)
 	{
@@ -112,11 +91,9 @@ void	ft_pipex(t_pipex *pipex, char **envp)
 		close(fd[0]);
 		dup2(output, STDOUT_FILENO);
 		close(output);
-		execve(path2, pipex->cmd2, envp);
-		ft_error("child2 fails\n");
+		execve(path2, pipex->cmd2, pipex->envp);
+		ft_error_exit(NULL, "child2 fails\n", 1);
 	}
-	free(path1);
-	free(path2);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -124,9 +101,9 @@ int	main(int argc, char **argv, char **envp)
 	t_pipex	pipex;
 
 	if (argc != 5)
-		ft_error("Invalid number of arguments\n");
+		ft_error_exit(NULL, "Invalid number of arguments\n", 1);
 	pipex = ft_init_pipex(argv, envp);
-	ft_pipex(&pipex, envp);
+	ft_pipex(&pipex);
 	free_array(pipex.cmd1);
 	free_array(pipex.cmd2);
 	free(pipex.file1);

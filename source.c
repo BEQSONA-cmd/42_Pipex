@@ -5,94 +5,107 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: btvildia <btvildia@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/21 17:19:59 by btvildia          #+#    #+#             */
-/*   Updated: 2024/03/31 20:54:44 by btvildia         ###   ########.fr       */
+/*   Created: 2024/03/05 21:51:09 by btvildia          #+#    #+#             */
+/*   Updated: 2024/04/01 20:51:07 by btvildia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-int	ft_strlen(char *c)
+char	*find_path(char *cmd, char *path)
+{
+	char	*c;
+	char	*tmp;
+	char	**paths;
+	int		i;
+	int		fd;
+
+	i = 0;
+	paths = ft_split(path + 5, ':');
+	while (paths[i] != NULL)
+	{
+		tmp = ft_strjoin(paths[i], "/");
+		c = ft_strjoin(tmp, cmd);
+		free(tmp);
+		fd = open(c, O_RDONLY);
+		if (fd != -1)
+		{
+			close(fd);
+			free_array(paths);
+			return (c);
+		}
+		free(c);
+		i++;
+	}
+	free_array(paths);
+	return (NULL);
+}
+
+void	ft_error_exit(char *str, char *str2, int status)
 {
 	int	i;
 
 	i = 0;
-	while (c[i])
+	if (str == NULL)
 	{
-		i++;
+		write(2, "pipex: ", 7);
+		write(2, str2, ft_strlen(str2));
+		exit(1);
 	}
-	return (i);
+	write(2, "pipex: ", 7);
+	write(2, str, ft_strlen(str));
+	write(2, str2, ft_strlen(str2));
+	exit(status);
 }
 
-char	*ft_strjoin(char *s1, char *s2)
+void	free_array(char **arr)
 {
-	unsigned int	x;
-	unsigned int	y;
-	char			*a;
-	unsigned int	i;
+	int	i;
 
-	if (s1 == NULL && s2 == NULL)
-	{
-		return (NULL);
-	}
-	x = (s1 != NULL) ? ft_strlen(s1) : 0;
-	y = (s2 != NULL) ? ft_strlen(s2) : 0;
-	a = malloc(x + y + 1);
-	if (!a)
-	{
-		return (NULL);
-	}
 	i = 0;
-	if (s1 != NULL)
+	while (arr[i])
 	{
-		while (s1[i] != '\0')
-		{
-			a[i] = s1[i];
-			i++;
-		}
-	}
-	i = 0;
-	while (s2 != NULL && s2[i] != '\0')
-	{
-		a[x + i] = s2[i];
+		free(arr[i]);
 		i++;
 	}
-	a[x + i] = '\0';
-	return (a);
+	free(arr);
 }
 
-char	*ft_strdup(char *s1)
+char	**ft_put(char **c, char *a, char d)
 {
-	unsigned int	j;
-	unsigned int	i;
-	char			*a;
-
-	j = ft_strlen(s1);
-	i = 0;
-	a = malloc(((j) * sizeof(char)) + 1);
-	if (s1 == NULL)
-		return (malloc(0));
-	if (a == NULL)
-		return (NULL);
-	while (i < j)
-	{
-		a[i] = s1[i];
-		i++;
-	}
-	a[i] = '\0';
-	return (a);
-}
-
-char	**ft_split(char *a, char d)
-{
-	int		i;
-	int		j;
-	int		x;
-	char	**c;
+	int	x;
+	int	i;
+	int	j;
 
 	i = 0;
 	j = 0;
 	x = 0;
+	while (a[i])
+	{
+		while (a[i] && a[i] == d)
+			i++;
+		j = i;
+		while (a[i] && a[i] != d)
+			i++;
+		if (i > j)
+		{
+			c[x] = malloc(sizeof(char) * (i - j) + 1);
+			ft_strncpy(c[x], &a[j], i - j);
+			x++;
+		}
+	}
+	c[x] = NULL;
+	return (c);
+}
+
+char	**ft_split(char *a, char d)
+{
+	int		j;
+	int		i;
+	char	**c;
+
+	i = 0;
+	j = 0;
 	while (a[i])
 	{
 		while (a[i] && a[i] == d)
@@ -103,65 +116,6 @@ char	**ft_split(char *a, char d)
 			i++;
 	}
 	c = malloc(sizeof(char *) * (j + 1));
-	if (!c)
-		return (NULL);
-	i = 0;
-	j = 0;
-	while (a[i])
-	{
-		while (a[i] && a[i] == d)
-			i++;
-		j = i;
-		while (a[i] && a[i] != d)
-			i++;
-		if (i > j)
-		{
-			c[x] = malloc(sizeof(char) * (i - j + 1));
-			if (!c[x])
-			{
-				while (x > 0)
-				{
-					free(c[x - 1]);
-					x--;
-				}
-				free(c);
-				return (NULL);
-			}
-			ft_strncpy(c[x], &a[j], i - j);
-			c[x][i - j] = '\0';
-			x++;
-		}
-	}
-	c[x] = NULL;
+	c = ft_put(c, a, d);
 	return (c);
-}
-
-int	ft_strncmp(char *s1, char *s2, int n)
-{
-	int	i;
-
-	i = 0;
-	while (s1[i] != '\0' && s2[i] != '\0' && i < n)
-	{
-		if (s1[i] != s2[i])
-			return (s1[i] - s2[i]);
-		i++;
-	}
-	if (i == n)
-		return (0);
-	return (s1[i] - s2[i]);
-}
-
-char	*ft_strncpy(char *s1, char *s2, int n)
-{
-	int	i;
-
-	i = 0;
-	while (s2[i] != '\0' && i < n)
-	{
-		s1[i] = s2[i];
-		i++;
-	}
-	s1[i] = '\0';
-	return (s1);
 }
