@@ -6,11 +6,11 @@
 /*   By: btvildia <btvildia@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 21:51:09 by btvildia          #+#    #+#             */
-/*   Updated: 2024/04/01 20:51:07 by btvildia         ###   ########.fr       */
+/*   Updated: 2024/04/18 10:29:10 by btvildia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "../pipex.h"
 
 char	*find_path(char *cmd, char *path)
 {

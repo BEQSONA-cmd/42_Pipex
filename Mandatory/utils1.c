@@ -6,11 +6,11 @@
 /*   By: btvildia <btvildia@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 19:02:47 by btvildia          #+#    #+#             */
-/*   Updated: 2024/04/01 19:09:38 by btvildia         ###   ########.fr       */
+/*   Updated: 2024/04/18 20:55:15 by btvildia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "../pipex.h"
 
 int	ft_strlen(char *c)
 {

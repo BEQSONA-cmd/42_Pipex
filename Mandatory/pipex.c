@@ -6,11 +6,11 @@
 /*   By: btvildia <btvildia@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 15:12:09 by btvildia          #+#    #+#             */
-/*   Updated: 2024/04/01 20:59:56 by btvildia         ###   ########.fr       */
+/*   Updated: 2024/04/18 12:26:32 by btvildia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "../pipex.h"
 
 t_pipex	ft_init_pipex(char **argv, char **envp)
 {

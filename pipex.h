@@ -6,7 +6,7 @@
 /*   By: btvildia <btvildia@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 15:11:52 by btvildia          #+#    #+#             */
-/*   Updated: 2024/04/01 18:48:24 by btvildia         ###   ########.fr       */
+/*   Updated: 2024/04/18 21:08:55 by btvildia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,17 @@ typedef struct s_pipex
 	char	*path1;
 	char	*path2;
 	char	**envp;
+	int		infile;
+	int		outfile;
 }			t_pipex;
 
+void		here_doc(char *limiter);
+char		*ft_reallocate(char *s1, char *s2);
+char		*ft_strjoin_null(char *s2);
+char		*ft_nline(char *s, int c);
+int			open_file(char *argv, int i);
+char		*get_next_line(int fd);
+void		ft_execve(char *argv, char **envp);
 void		ft_error_exit(char *str, char *str2, int status);
 char		*find_path(char *cmd, char *path);
 void		child_process1(t_pipex *pipex, char *path1, int input, int *fd);
